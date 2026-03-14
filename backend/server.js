@@ -8,7 +8,8 @@ dotenv.config();
 
 const db = require('./src/config/db');
 const authRoutes = require('./src/routes/authRoutes');
-const testRoutes = require('./src/routes/testRoutes'); // NEW
+const testRoutes = require('./src/routes/testRoutes'); 
+const moduleRoutes = require('./src/routes/moduleRoutes');// NEW
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/test', testRoutes); // NEW: Test protected routes
+app.use('/api/modules', moduleRoutes);
 
 // Basic Route for testing
 app.get('/', (req, res) => {
