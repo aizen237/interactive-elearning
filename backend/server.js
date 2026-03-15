@@ -9,11 +9,14 @@ dotenv.config();
 const db = require('./src/config/db');
 const authRoutes = require('./src/routes/authRoutes');
 const testRoutes = require('./src/routes/testRoutes'); 
-const moduleRoutes = require('./src/routes/moduleRoutes');// NEW
+const moduleRoutes = require('./src/routes/moduleRoutes');
+const contentRoutes = require('./src/routes/contentRoutes');// NEW
 
 const app = express();
 
 // Middleware
+// Serve uploaded files
+app.use('/uploads', express.static('uploads'));
 app.use(cors());
 app.use(express.json()); // Allows us to receive JSON data in requests
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
@@ -22,6 +25,7 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use('/api/auth', authRoutes);
 app.use('/api/test', testRoutes); // NEW: Test protected routes
 app.use('/api/modules', moduleRoutes);
+app.use('/api/content', contentRoutes);
 
 // Basic Route for testing
 app.get('/', (req, res) => {
