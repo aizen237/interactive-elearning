@@ -3,6 +3,7 @@ import Login from './pages/Login';
 import StudentDashboard from './pages/StudentDashboard';
 import TeacherDashboard from './pages/TeacherDashboard';
 import ContentManagement from './pages/ContentManagement';
+import Analytics from './pages/Analytics';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
         <Route path="/content-management" element={<ContentManagement />} />
+        <Route path="/analytics" element={<Analytics />} />
       </Routes>
     </Router>
   );

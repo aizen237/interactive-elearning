@@ -1,4 +1,3 @@
-// src/routes/contentRoutes.js
 const express = require('express');
 const router = express.Router();
 const contentController = require('../controllers/contentController');
@@ -10,7 +9,6 @@ router.get('/module/:moduleId', contentController.getModuleContent);
 router.get('/:id', contentController.getContent);
 
 // Protected routes (teacher/admin only)
-// upload.single('media') allows ONE file upload with field name 'media'
 router.post('/', 
   protect, 
   authorize('teacher', 'admin'), 
@@ -29,6 +27,13 @@ router.delete('/:id',
   protect, 
   authorize('teacher', 'admin'), 
   contentController.deleteContent
+);
+
+// Toggle lock status
+router.patch('/:id/lock', 
+  protect, 
+  authorize('teacher', 'admin'), 
+  contentController.toggleLock
 );
 
 module.exports = router;

@@ -38,10 +38,13 @@ function TeacherDashboard() {
             <p className="text-blue-100">Create and manage quiz questions</p>
           </button>
 
-          <div className="bg-gray-300 text-gray-600 p-6 rounded-lg shadow cursor-not-allowed">
-            <h2 className="text-2xl font-semibold mb-2">👥 View Students</h2>
-            <p className="text-gray-500">Coming soon...</p>
-          </div>
+          <button
+  onClick={() => navigate('/analytics')}
+  className="bg-green-600 text-white p-6 rounded-lg shadow hover:bg-green-700 transition"
+>
+  <h2 className="text-2xl font-semibold mb-2">📊 Analytics</h2>
+  <p className="text-green-100">View dashboard statistics</p>
+</button>
 
           <div className="bg-gray-300 text-gray-600 p-6 rounded-lg shadow cursor-not-allowed">
             <h2 className="text-2xl font-semibold mb-2">📊 Class Analytics</h2>

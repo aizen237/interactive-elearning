@@ -160,7 +160,6 @@ exports.updateContent = async (req, res) => {
     });
   }
 };
-
 /**
  * Delete content
  * DELETE /api/content/:id
@@ -186,6 +185,45 @@ exports.deleteContent = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error deleting content',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Toggle content lock status
+ * PATCH /api/content/:id/lock
+ * Protected: Teacher/Admin only
+ */
+exports.toggleLock = async (req, res) => {
+  try {
+    const { is_locked } = req.body;
+
+    if (is_locked === undefined) {
+      return res.status(400).json({
+        success: false,
+        message: 'is_locked field is required'
+      });
+    }
+
+    const updated = await ContentItem.update(req.params.id, { is_locked });
+
+    if (!updated) {
+      return res.status(404).json({
+        success: false,
+        message: 'Content not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Content ${is_locked ? 'locked' : 'unlocked'} successfully`
+    });
+  } catch (error) {
+    console.error('Toggle lock error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error toggling lock status',
       error: error.message
     });
   }

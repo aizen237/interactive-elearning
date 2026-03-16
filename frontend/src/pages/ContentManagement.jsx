@@ -40,7 +40,7 @@ function ContentManagement() {
       const response = await axios.get(`${API_URL}/modules`);
       setModules(response.data.data);
     } catch (err) {
-        console.error(err);
+      console.error(err);
       setError('Failed to load modules');
     }
   };
@@ -50,7 +50,7 @@ function ContentManagement() {
       const response = await axios.get(`${API_URL}/content/module/${moduleId}`);
       setContent(response.data.data);
     } catch (err) {
-        console.error(err);
+      console.error(err);
       setError('Failed to load content');
     }
   };
@@ -118,6 +118,26 @@ function ContentManagement() {
     }
   };
 
+  // NEW: Handle lock/unlock toggle
+  const handleToggleLock = async (contentId, currentLockStatus) => {
+    try {
+      await axios.patch(
+        `${API_URL}/content/${contentId}/lock`,
+        { is_locked: currentLockStatus ? 0 : 1 },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
+      
+      setSuccess(`Content ${currentLockStatus ? 'unlocked' : 'locked'} successfully!`);
+      fetchContent(selectedModule);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to toggle lock');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-6xl mx-auto">
@@ -177,16 +197,52 @@ function ContentManagement() {
                 ) : (
                   content.map((item) => (
                     <div key={item.id} className="border rounded-lg p-4 hover:bg-gray-50">
-                      <div className="flex justify-between items-start">
+                      <div className="flex gap-4">
+                        {/* Display image if file_path exists */}
+                        {item.file_path && (
+                          <div className="flex-shrink-0">
+                            <img 
+                              src={`http://localhost:5000/uploads/images/${item.file_path}`}
+                              alt="Quiz media"
+                              className="w-24 h-24 object-cover rounded-lg border"
+                            />
+                          </div>
+                        )}
+                        
                         <div className="flex-1">
-                          <h3 className="font-semibold">{item.question_text}</h3>
-                          <p className="text-sm text-gray-600 mt-1">
-                            Answer: {item.correct_answer} | Difficulty: {item.difficulty}
-                          </p>
+                          <div className="flex justify-between items-start gap-4">
+                            <div className="flex-1">
+                              <h3 className="font-semibold">{item.question_text}</h3>
+                              <p className="text-sm text-gray-600 mt-1">
+                                Answer: {item.correct_answer} | Difficulty: {item.difficulty}
+                              </p>
+                              {item.file_path && (
+                                <span className="text-xs text-blue-600 mt-1 inline-block">
+                                  📎 Has media attachment
+                                </span>
+                              )}
+                            </div>
+                            
+                            {/* UPDATED: Added lock button and badges container */}
+                            <div className="flex items-center gap-2">
+                              <span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">
+                                {item.item_type}
+                              </span>
+                              
+                              {/* Lock/Unlock Button */}
+                              <button
+                                onClick={() => handleToggleLock(item.id, item.is_locked)}
+                                className={`px-3 py-1 rounded text-xs font-medium transition ${
+                                  item.is_locked
+                                    ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                                    : 'bg-green-100 text-green-700 hover:bg-green-200'
+                                }`}
+                              >
+                                {item.is_locked ? '🔒 Locked' : '🔓 Unlocked'}
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                        <span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">
-                          {item.item_type}
-                        </span>
                       </div>
                     </div>
                   ))

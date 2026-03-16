@@ -10,7 +10,8 @@ const db = require('./src/config/db');
 const authRoutes = require('./src/routes/authRoutes');
 const testRoutes = require('./src/routes/testRoutes'); 
 const moduleRoutes = require('./src/routes/moduleRoutes');
-const contentRoutes = require('./src/routes/contentRoutes');// NEW
+const contentRoutes = require('./src/routes/contentRoutes');
+const analyticsRoutes = require('./src/routes/analyticsRoutes');// NEW
 
 const app = express();
 
@@ -23,9 +24,10 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/test', testRoutes); // NEW: Test protected routes
+app.use('/api/test', testRoutes); 
 app.use('/api/modules', moduleRoutes);
 app.use('/api/content', contentRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Basic Route for testing
 app.get('/', (req, res) => {
