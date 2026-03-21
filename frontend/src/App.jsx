@@ -4,6 +4,7 @@ import StudentDashboard from './pages/StudentDashboard';
 import TeacherDashboard from './pages/TeacherDashboard';
 import ContentManagement from './pages/ContentManagement';
 import Analytics from './pages/Analytics';
+import LessonViewer from './pages/LessonViewer';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
         <Route path="/content-management" element={<ContentManagement />} />
         <Route path="/analytics" element={<Analytics />} />
+        <Route path="/lessons" element={<LessonViewer />} />
       </Routes>
     </Router>
   );

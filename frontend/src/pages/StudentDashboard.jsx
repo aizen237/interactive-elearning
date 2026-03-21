@@ -1,16 +1,57 @@
+import { useNavigate } from 'react-router-dom';
+
 function StudentDashboard() {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">
-          Student Dashboard
-        </h1>
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-gray-800">Student Dashboard</h1>
+          <button
+            onClick={handleLogout}
+            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+          >
+            Logout
+          </button>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-6 mb-6">
           <p className="text-xl">Welcome, {user.full_name}!</p>
           <p className="text-gray-600 mt-2">Role: {user.role}</p>
           <p className="text-gray-600">Username: {user.username}</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <button
+            onClick={() => navigate('/lessons')}
+            className="bg-blue-600 text-white p-6 rounded-lg shadow hover:bg-blue-700 transition"
+          >
+            <h2 className="text-2xl font-semibold mb-2">📚 My Lessons</h2>
+            <p className="text-blue-100">View and complete lessons</p>
+          </button>
+
+          <div className="bg-gray-300 text-gray-600 p-6 rounded-lg shadow cursor-not-allowed">
+            <h2 className="text-2xl font-semibold mb-2">🏆 My Progress</h2>
+            <p className="text-gray-500">Coming soon...</p>
+          </div>
+
+          <div className="bg-gray-300 text-gray-600 p-6 rounded-lg shadow cursor-not-allowed">
+            <h2 className="text-2xl font-semibold mb-2">🎖️ Badges</h2>
+            <p className="text-gray-500">Coming soon...</p>
+          </div>
+
+          <div className="bg-gray-300 text-gray-600 p-6 rounded-lg shadow cursor-not-allowed">
+            <h2 className="text-2xl font-semibold mb-2">📊 Leaderboard</h2>
+            <p className="text-gray-500">Coming soon...</p>
+          </div>
         </div>
       </div>
     </div>
