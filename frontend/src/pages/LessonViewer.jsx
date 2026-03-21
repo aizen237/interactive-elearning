@@ -33,7 +33,7 @@ function LessonViewer() {
     };
 
     fetchContent();
-  }, []);
+  }, [token]);
 
   const handleContentClick = (content) => {
     setSelectedContent(content);
