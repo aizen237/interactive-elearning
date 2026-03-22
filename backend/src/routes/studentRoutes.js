@@ -23,4 +23,15 @@ router.post('/submit',
   studentController.submitAnswer
 );
 
+router.get('/stats', 
+  protect, 
+  authorize('student'), 
+  studentController.getStudentStats
+);
+
+router.get('/leaderboard', 
+  protect, 
+  authorize('student'), 
+  studentController.getLeaderboard
+);
 module.exports = router;

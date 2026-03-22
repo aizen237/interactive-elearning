@@ -5,6 +5,7 @@ import TeacherDashboard from './pages/TeacherDashboard';
 import ContentManagement from './pages/ContentManagement';
 import Analytics from './pages/Analytics';
 import LessonViewer from './pages/LessonViewer';
+import Leaderboard from './pages/Leaderboard';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/content-management" element={<ContentManagement />} />
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/lessons" element={<LessonViewer />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
       </Routes>
     </Router>
   );

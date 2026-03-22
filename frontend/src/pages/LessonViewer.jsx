@@ -10,6 +10,9 @@ function LessonViewer() {
   const [selectedAnswer, setSelectedAnswer] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [result, setResult] = useState(null);
+  const [showLevelUpModal, setShowLevelUpModal] = useState(false);
+  const [showBadgeModal, setShowBadgeModal] = useState(false);
+  const [earnedBadges, setEarnedBadges] = useState([]);
 
   const API_URL = 'http://localhost:5000/api';
   const token = localStorage.getItem('token');
@@ -26,14 +29,14 @@ function LessonViewer() {
         setModules(response.data.data);
         setLoading(false);
       // eslint-disable-next-line no-unused-vars
-      } catch ( error) {
+      } catch (error) {
         setError('Failed to load content');
         setLoading(false);
       }
     };
 
     fetchContent();
-  }, [token]);
+  }, [ token]);
 
   const handleContentClick = (content) => {
     setSelectedContent(content);
@@ -69,8 +72,22 @@ function LessonViewer() {
         }
       );
 
-      setResult(response.data.data);
+      const resultData = response.data.data;
+      setResult(resultData);
       setSubmitted(true);
+
+      // Show badge modal if new badges earned
+      if (resultData.newBadges && resultData.newBadges.length > 0) {
+        setEarnedBadges(resultData.newBadges);
+        setShowBadgeModal(true);
+      }
+
+      // Show level up modal if leveled up (after badge modal)
+      if (resultData.leveledUp) {
+        setTimeout(() => {
+          setShowLevelUpModal(true);
+        }, resultData.newBadges?.length > 0 ? 3000 : 0);
+      }
     } catch (error) {
       alert('Failed to submit answer: ' + (error.response?.data?.message || 'Unknown error'));
     }
@@ -245,29 +262,64 @@ function LessonViewer() {
 
               {/* Result & Explanation */}
               {submitted && result && (
-                <div className={`border-l-4 p-4 rounded ${
-                  result.isCorrect 
-                    ? 'bg-green-50 border-green-500' 
-                    : 'bg-red-50 border-red-500'
-                }`}>
-                  <h3 className={`font-semibold mb-2 ${
-                    result.isCorrect ? 'text-green-900' : 'text-red-900'
+                <>
+                  {/* Main Result Box */}
+                  <div className={`border-l-4 p-4 rounded ${
+                    result.isCorrect 
+                      ? 'bg-green-50 border-green-500' 
+                      : 'bg-red-50 border-red-500'
                   }`}>
-                    {result.isCorrect ? '🎉 Correct!' : '❌ Incorrect'}
-                  </h3>
-                  <p className={result.isCorrect ? 'text-green-800' : 'text-red-800'}>
-                    {result.isCorrect 
-                      ? `Great job! You earned ${result.score} points!`
-                      : `The correct answer is: ${result.correctAnswer}`
-                    }
-                  </p>
-                  {selectedContent.explanation && (
-                    <div className="mt-3 pt-3 border-t border-gray-300">
-                      <p className="font-semibold text-gray-700">💡 Explanation:</p>
-                      <p className="text-gray-700 mt-1">{selectedContent.explanation}</p>
-                    </div>
+                    <h3 className={`font-semibold mb-2 ${
+                      result.isCorrect ? 'text-green-900' : 'text-red-900'
+                    }`}>
+                      {result.isCorrect ? '🎉 Correct!' : '❌ Incorrect'}
+                    </h3>
+                    <p className={result.isCorrect ? 'text-green-800' : 'text-red-800'}>
+                      {result.isCorrect 
+                        ? `Great job! You earned ${result.score} points!`
+                        : `The correct answer is: ${result.correctAnswer}`
+                      }
+                    </p>
+                    {selectedContent.explanation && (
+                      <div className="mt-3 pt-3 border-t border-gray-300">
+                        <p className="font-semibold text-gray-700">💡 Explanation:</p>
+                        <p className="text-gray-700 mt-1">{selectedContent.explanation}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* XP and Level Info (only if correct) */}
+                  {result.isCorrect && (
+                    result.alreadyCompleted ? (
+                      <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-400 rounded-lg p-4">
+                        <div className="flex items-center gap-3">
+                          <span className="text-3xl">✅</span>
+                          <div>
+                            <p className="text-lg font-bold text-blue-900">
+                              Already Completed!
+                            </p>
+                            <p className="text-sm text-blue-700">
+                              No XP awarded - you've already passed this question
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ) : result.xpEarned > 0 && (
+                      <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-400 rounded-lg p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-lg font-bold text-orange-900">
+                              ⭐ +{result.xpEarned} XP Earned!
+                            </p>
+                            <p className="text-sm text-orange-700 mt-1">
+                              Total XP: {result.totalXP} | Level: {result.currentLevel}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )
                   )}
-                </div>
+                </>
               )}
 
               {/* Submit/Try Again Buttons */}
@@ -287,6 +339,66 @@ function LessonViewer() {
                   Try Again
                 </button>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* Badge Award Modal */}
+        {showBadgeModal && earnedBadges.length > 0 && (
+          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+            <div className="bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 rounded-3xl p-12 max-w-2xl mx-4 shadow-2xl">
+              <div className="text-center space-y-6">
+                <div className="text-9xl animate-pulse">🏆</div>
+                <h2 className="text-5xl font-black text-white drop-shadow-lg">
+                  NEW BADGE{earnedBadges.length > 1 ? 'S' : ''} UNLOCKED!
+                </h2>
+                
+                <div className="space-y-4">
+                  {earnedBadges.map((badge) => (
+                    <div key={badge.id} className="bg-white bg-opacity-20 rounded-2xl p-6 backdrop-blur">
+                      <div className="text-6xl mb-3">{badge.icon_url}</div>
+                      <h3 className="text-3xl font-bold text-white">{badge.name}</h3>
+                      <p className="text-xl text-yellow-100 mt-2">{badge.description}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => setShowBadgeModal(false)}
+                  className="mt-6 bg-white text-purple-600 px-8 py-4 rounded-full text-xl font-bold hover:bg-yellow-100 transform hover:scale-110 transition shadow-lg"
+                >
+                  Awesome! 🎉
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Level Up Modal */}
+        {showLevelUpModal && result?.leveledUp && (
+          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+            <div className="bg-gradient-to-br from-yellow-400 via-orange-400 to-red-400 rounded-3xl p-12 max-w-2xl mx-4 shadow-2xl">
+              <div className="text-center space-y-6">
+                <div className="text-9xl">🎊</div>
+                <h2 className="text-6xl font-black text-white drop-shadow-lg">
+                  LEVEL UP!
+                </h2>
+                <div className="text-8xl font-black text-yellow-100 drop-shadow-lg animate-pulse">
+                  {result.currentLevel}
+                </div>
+                <p className="text-2xl font-bold text-white">
+                  Congratulations! You reached Level {result.currentLevel}!
+                </p>
+                <p className="text-xl text-yellow-100">
+                  Total XP: {result.totalXP}
+                </p>
+                <button
+                  onClick={() => setShowLevelUpModal(false)}
+                  className="mt-6 bg-white text-orange-600 px-8 py-4 rounded-full text-xl font-bold hover:bg-yellow-100 transform hover:scale-110 transition shadow-lg"
+                >
+                  Continue Learning! 🚀
+                </button>
+              </div>
             </div>
           </div>
         )}
