@@ -360,6 +360,7 @@ exports.getStudentStats = async (req, res) => {
     });
   }
 };
+
 /**
  * Get leaderboard
  * GET /api/student/leaderboard
@@ -423,6 +424,100 @@ exports.getLeaderboard = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error fetching leaderboard',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Get detailed student progress
+ * GET /api/student/progress
+ * Protected: Student only
+ */
+exports.getStudentProgress = async (req, res) => {
+  try {
+    const student_id = req.user.id;
+
+    // Get student profile
+    const [profile] = await db.execute(
+      'SELECT * FROM student_profiles WHERE student_id = ?',
+      [student_id]
+    );
+
+    // Get all modules with their content
+    const [modules] = await db.execute(
+      'SELECT * FROM modules ORDER BY id ASC'
+    );
+
+    // For each module, get progress stats
+    const moduleProgress = [];
+    
+    for (const module of modules) {
+      // Get total content in this module
+      const [totalContent] = await db.execute(
+        'SELECT COUNT(*) as total FROM content_items WHERE module_id = ? AND is_locked = 0',
+        [module.id]
+      );
+
+      // Get completed content (student has passed)
+      const [completedContent] = await db.execute(
+        `SELECT COUNT(DISTINCT content_id) as completed 
+         FROM score_logs 
+         WHERE student_id = ? 
+         AND score_obtained = 100
+         AND content_id IN (SELECT id FROM content_items WHERE module_id = ?)`,
+        [student_id, module.id]
+      );
+
+      // Get total XP earned in this module
+      const [moduleXP] = await db.execute(
+        `SELECT COALESCE(SUM(
+          CASE 
+            WHEN c.difficulty = 'Easy' THEN 10
+            WHEN c.difficulty = 'Medium' THEN 30
+            WHEN c.difficulty = 'Hard' THEN 60
+            ELSE 0
+          END
+        ), 0) as total_xp
+         FROM (
+           SELECT DISTINCT s.content_id
+           FROM score_logs s
+           WHERE s.student_id = ? 
+           AND s.score_obtained = 100
+           AND s.content_id IN (SELECT id FROM content_items WHERE module_id = ?)
+         ) completed
+         JOIN content_items c ON completed.content_id = c.id`,
+        [student_id, module.id]
+      );
+
+      const total = totalContent[0].total;
+      const completed = completedContent[0].completed;
+      const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+      moduleProgress.push({
+        moduleId: module.id,
+        moduleName: module.module_name,
+        description: module.description,
+        totalContent: total,
+        completedContent: completed,
+        completionPercentage: percentage,
+        xpEarned: moduleXP[0].total_xp
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        profile: profile[0] || { total_xp: 0, current_level: 1 },
+        moduleProgress: moduleProgress
+      }
+    });
+
+  } catch (error) {
+    console.error('Get student progress error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching student progress',
       error: error.message
     });
   }

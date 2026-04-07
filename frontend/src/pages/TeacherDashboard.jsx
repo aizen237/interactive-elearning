@@ -43,7 +43,7 @@ function TeacherDashboard() {
   className="bg-green-600 text-white p-6 rounded-lg shadow hover:bg-green-700 transition"
 >
   <h2 className="text-2xl font-semibold mb-2">📊 Analytics</h2>
-  <p className="text-green-100">View dashboard statistics</p>
+  <p className="text-green-100">View dashboa` rd statistics</p>
 </button>
 
           <div className="bg-gray-300 text-gray-600 p-6 rounded-lg shadow cursor-not-allowed">

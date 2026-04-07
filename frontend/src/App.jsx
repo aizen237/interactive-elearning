@@ -6,6 +6,8 @@ import ContentManagement from './pages/ContentManagement';
 import Analytics from './pages/Analytics';
 import LessonViewer from './pages/LessonViewer';
 import Leaderboard from './pages/Leaderboard';
+import Progress from './pages/Progress';
+import FidelChartPage from './pages/FidelChartPage';
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/lessons" element={<LessonViewer />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/progress" element={<Progress />} />
+        <Route path="/alphabet" element={<FidelChartPage />} />
       </Routes>
     </Router>
   );

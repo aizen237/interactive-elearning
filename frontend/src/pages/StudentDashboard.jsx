@@ -145,24 +145,40 @@ function StudentDashboard() {
 
         {/* Action Buttons */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <button
-            onClick={() => navigate('/lessons')}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-105"
-          >
-            <h2 className="text-3xl font-semibold mb-2">📚 My Lessons</h2>
-            <p className="text-blue-100">Continue your learning journey</p>
-          </button>
+  <button
+    onClick={() => navigate('/lessons')}
+    className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-105"
+  >
+    <h2 className="text-3xl font-semibold mb-2">📚 My Lessons</h2>
+    <p className="text-blue-100">Continue your learning journey</p>
+  </button>
 
-          <button
-            onClick={() => navigate('/leaderboard')}
-            className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-105"
-          >
-            <h2 className="text-3xl font-semibold mb-2">🏆 Leaderboard</h2>
-            <p className="text-yellow-100">See how you rank!</p>
-          </button>
+  <button
+    onClick={() => navigate('/progress')}
+    className="bg-gradient-to-r from-green-600 to-teal-600 text-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-105"
+  >
+    <h2 className="text-3xl font-semibold mb-2">📈 My Progress</h2>
+    <p className="text-green-100">Track your module completion</p>
+  </button>
+
+  <button
+    onClick={() => navigate('/leaderboard')}
+    className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-105"
+  >
+    <h2 className="text-3xl font-semibold mb-2">🏆 Leaderboard</h2>
+    <p className="text-yellow-100">See how you rank!</p>
+  </button>
+
+  <button
+    onClick={() => navigate('/alphabet')}
+    className="bg-gradient-to-r from-teal-600 to-emerald-600 text-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-105"
+  >
+    <h2 className="text-3xl font-semibold mb-2">📖 Fidel Alphabet</h2>
+    <p className="text-teal-100">Learn the Amharic alphabet</p>
+  </button>
+</div>
         </div>
       </div>
-    </div>
   );
 }
 

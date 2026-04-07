@@ -34,4 +34,10 @@ router.get('/leaderboard',
   authorize('student'), 
   studentController.getLeaderboard
 );
+
+router.get('/progress', 
+  protect, 
+  authorize('student'), 
+  studentController.getStudentProgress
+);
 module.exports = router;
