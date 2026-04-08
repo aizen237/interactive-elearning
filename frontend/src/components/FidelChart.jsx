@@ -125,7 +125,7 @@ function FidelChart() {
 
   // Vowel mapping for character-level search
   const vowelMap = {
-    'ä': 0, 'e': 0, // First vowel (ä) - also matches 'e' for ease
+    'ä': 0, // First vowel (ä)
     'u': 1,
     'i': 2,
     'a': 3, // Fourth vowel (a)

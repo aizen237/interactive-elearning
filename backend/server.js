@@ -12,7 +12,8 @@ const testRoutes = require('./src/routes/testRoutes');
 const moduleRoutes = require('./src/routes/moduleRoutes');
 const contentRoutes = require('./src/routes/contentRoutes');
 const analyticsRoutes = require('./src/routes/analyticsRoutes');
-const studentRoutes = require('./src/routes/studentRoutes');// NEW
+const studentRoutes = require('./src/routes/studentRoutes');
+const parentRoutes = require('./src/routes/parentRoutes');
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use('/api/modules', moduleRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/student', studentRoutes);
+app.use('/api/parent', parentRoutes);
 
 // Basic Route for testing
 app.get('/', (req, res) => {

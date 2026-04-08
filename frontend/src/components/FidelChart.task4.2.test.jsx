@@ -24,8 +24,8 @@ describe('FidelChart Component - Task 4.2: Character Cells', () => {
     
     const dataCells = screen.getAllByRole('cell');
     
-    // Should have 14 data cells (2 families × 7 characters)
-    expect(dataCells).toHaveLength(14);
+    // Should have 231 data cells (33 families × 7 characters)
+    expect(dataCells).toHaveLength(231);
     
     dataCells.forEach((cell) => {
       expect(cell).toHaveClass('text-2xl');
@@ -50,8 +50,8 @@ describe('FidelChart Component - Task 4.2: Character Cells', () => {
     
     const dataCells = screen.getAllByRole('cell');
     
-    // Should have 14 data cells (2 families × 7 characters)
-    expect(dataCells).toHaveLength(14);
+    // Should have 231 data cells (33 families × 7 characters)
+    expect(dataCells).toHaveLength(231);
     
     dataCells.forEach((cell) => {
       expect(cell).toHaveAttribute('role', 'cell');
@@ -63,8 +63,8 @@ describe('FidelChart Component - Task 4.2: Character Cells', () => {
     
     const dataCells = screen.getAllByRole('cell');
     
-    // 2 families × 7 vowel columns = 14 cells
-    expect(dataCells).toHaveLength(14);
+    // 33 families × 7 vowel columns = 231 cells
+    expect(dataCells).toHaveLength(231);
   });
 
   it('displays characters in the correct grid structure (Req 3.5)', () => {

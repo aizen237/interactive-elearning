@@ -34,6 +34,8 @@ function Login() {
       const role = response.data.data.role.toLowerCase();
       if (role === 'teacher' || role === 'admin') {
         navigate('/teacher-dashboard');
+      } else if (role === 'parent') {
+        navigate('/parent-dashboard');
       } else {
         navigate('/student-dashboard');
       }

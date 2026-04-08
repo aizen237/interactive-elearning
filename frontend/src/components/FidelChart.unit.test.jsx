@@ -12,20 +12,20 @@ describe('FidelChart Component - Unit Tests (Task 6)', () => {
       expect(() => render(<FidelChart />)).not.toThrow();
     });
 
-    it('renders correct number of rows (1 header + 2 data rows) - Req 5.1', () => {
+    it('renders correct number of rows (1 header + 33 data rows) - Req 5.1', () => {
       render(<FidelChart />);
       
       // Header row: 8 columnheader elements
       const columnHeaders = screen.getAllByRole('columnheader');
       expect(columnHeaders).toHaveLength(8);
       
-      // Data rows: 2 rowheader elements (one per family)
+      // Data rows: 33 rowheader elements (one per family)
       const rowHeaders = screen.getAllByRole('rowheader');
-      expect(rowHeaders).toHaveLength(2);
+      expect(rowHeaders).toHaveLength(33);
       
-      // Data cells: 2 families × 7 vowels = 14 cells
+      // Data cells: 33 families × 7 vowels = 231 cells
       const dataCells = screen.getAllByRole('cell');
-      expect(dataCells).toHaveLength(14);
+      expect(dataCells).toHaveLength(231);
     });
 
     it('renders correct number of columns (8 total) - Req 5.3', () => {
@@ -78,9 +78,10 @@ describe('FidelChart Component - Unit Tests (Task 6)', () => {
         expect(screen.getByText(char)).toBeInTheDocument();
       });
       
-      // Verify Ha label is present
-      const haLabel = screen.getByRole('rowheader', { name: 'Ha' });
-      expect(haLabel).toBeInTheDocument();
+      // Verify h label is present (there are multiple 'h' labels in the data)
+      const hLabels = screen.getAllByRole('rowheader', { name: 'h' });
+      expect(hLabels.length).toBeGreaterThan(0);
+      expect(hLabels[0]).toBeInTheDocument();
     });
 
     it('renders Le family characters correctly - Req 3.3', () => {
@@ -93,9 +94,9 @@ describe('FidelChart Component - Unit Tests (Task 6)', () => {
         expect(screen.getByText(char)).toBeInTheDocument();
       });
       
-      // Verify Le label is present
-      const leLabel = screen.getByRole('rowheader', { name: 'Le' });
-      expect(leLabel).toBeInTheDocument();
+      // Verify l label is present (lowercase in the data)
+      const lLabel = screen.getByRole('rowheader', { name: 'l' });
+      expect(lLabel).toBeInTheDocument();
     });
 
     it('renders characters in correct grid order - Req 3.4', () => {
@@ -153,8 +154,8 @@ describe('FidelChart Component - Unit Tests (Task 6)', () => {
     it('applies responsive classes on container - Req 4.2', () => {
       const { container } = render(<FidelChart />);
       
-      // Get the outer wrapper div
-      const wrapper = container.firstChild;
+      // Get the outer wrapper div (the one with overflow classes)
+      const wrapper = container.querySelector('.overflow-x-auto');
       
       // Verify responsive classes
       expect(wrapper).toHaveClass('w-full');
@@ -255,8 +256,8 @@ describe('FidelChart Component - Unit Tests (Task 6)', () => {
       
       const rowHeaders = screen.getAllByRole('rowheader');
       
-      // Should have 2 row headers (Ha, Le)
-      expect(rowHeaders).toHaveLength(2);
+      // Should have 33 row headers (all consonant families)
+      expect(rowHeaders).toHaveLength(33);
       
       rowHeaders.forEach((header) => {
         expect(header).toHaveAttribute('role', 'rowheader');
@@ -268,8 +269,8 @@ describe('FidelChart Component - Unit Tests (Task 6)', () => {
       
       const dataCells = screen.getAllByRole('cell');
       
-      // Should have 14 data cells (2 families × 7 vowels)
-      expect(dataCells).toHaveLength(14);
+      // Should have 231 data cells (33 families × 7 vowels)
+      expect(dataCells).toHaveLength(231);
       
       dataCells.forEach((cell) => {
         expect(cell).toHaveAttribute('role', 'cell');
@@ -288,11 +289,11 @@ describe('FidelChart Component - Unit Tests (Task 6)', () => {
       expect(columnHeaders).toHaveLength(8);
       
       const rowHeaders = screen.getAllByRole('rowheader');
-      expect(rowHeaders).toHaveLength(2);
+      expect(rowHeaders).toHaveLength(33);
       
       // Verify data cells
       const dataCells = screen.getAllByRole('cell');
-      expect(dataCells).toHaveLength(14);
+      expect(dataCells).toHaveLength(231);
     });
 
     it('has tabIndex on all interactive elements for keyboard navigation', () => {
