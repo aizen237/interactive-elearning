@@ -3,6 +3,7 @@ import Login from './pages/Login';
 import StudentDashboard from './pages/StudentDashboard';
 import TeacherDashboard from './pages/TeacherDashboard';
 import ParentDashboard from './pages/ParentDashboard';
+import AdminDashboard from './pages/AdminDashboard';
 import ContentManagement from './pages/ContentManagement';
 import Analytics from './pages/Analytics';
 import LessonViewer from './pages/LessonViewer';
@@ -21,6 +22,7 @@ function App() {
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
         <Route path="/parent-dashboard" element={<ParentDashboard />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/content-management" element={<ContentManagement />} />
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/lessons" element={<LessonViewer />} />

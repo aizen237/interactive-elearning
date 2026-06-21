@@ -2,6 +2,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken'); // NEW
 const User = require('../models/User');
+const NotificationPreferencesService = require('../services/NotificationPreferencesService');
 
 /**
  * Generate JWT Token
@@ -63,6 +64,14 @@ exports.register = async (req, res) => {
       role,
       phone_number: phone_number || null
     });
+
+    // Create default notification preferences for new user
+    try {
+      await NotificationPreferencesService.createDefaultPreferences(newUser.id);
+    } catch (prefError) {
+      console.error('Failed to create default notification preferences:', prefError);
+      // Log error but don't fail registration - preferences can be created later
+    }
 
     // Generate token
     const token = generateToken(newUser.id, newUser.role);

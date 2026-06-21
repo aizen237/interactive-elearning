@@ -41,4 +41,26 @@ const upload = multer({
   fileFilter: fileFilter
 });
 
+// CSV upload configuration for bulk user operations
+const csvStorage = multer.memoryStorage(); // Store in memory for parsing
+
+const csvFileFilter = (req, file, cb) => {
+  const extname = path.extname(file.originalname).toLowerCase();
+  const mimetype = file.mimetype;
+  
+  // Accept CSV files
+  if (extname === '.csv' || mimetype === 'text/csv' || mimetype === 'application/vnd.ms-excel') {
+    return cb(null, true);
+  } else {
+    cb(new Error('Only CSV files are allowed!'));
+  }
+};
+
+const csvUpload = multer({
+  storage: csvStorage,
+  limits: { fileSize: 2 * 1024 * 1024 }, // 2MB max for CSV
+  fileFilter: csvFileFilter
+});
+
 module.exports = upload;
+module.exports.csvUpload = csvUpload;

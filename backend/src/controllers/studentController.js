@@ -1,5 +1,7 @@
 // src/controllers/studentController.js
 const db = require('../config/db');
+const NotificationService = require('../services/NotificationService');
+const StreakService = require('../services/StreakService');
 
 /**
  * Get available content for student
@@ -210,8 +212,37 @@ exports.submitAnswer = async (req, res) => {
               description: badge.description,
               icon_url: badge.icon_url
             });
+            
+            // Notify student of badge earned
+            await NotificationService.notifyBadgeEarned(student_id, {
+              name: badge.name,
+              icon_url: badge.icon_url
+            });
           }
         }
+        
+        // Notify student if they leveled up
+        if (leveledUp) {
+          // Get unlocked modules for this level (if any)
+          const unlockedModules = []; // TODO: Implement module unlocking logic if needed
+          await NotificationService.notifyLevelUp(student_id, newLevel, unlockedModules);
+        }
+        
+        // Update student's streak
+        await StreakService.updateStreak(student_id);
+        
+        // Notify parents of quiz completion
+        const [studentData] = await db.execute(
+          'SELECT full_name FROM users WHERE id = ?',
+          [student_id]
+        );
+        const studentName = studentData[0]?.full_name || 'Student';
+        await NotificationService.notifyParentsQuizComplete(
+          student_id,
+          studentName,
+          question.title || 'Quiz',
+          score
+        );
 
         // Return result with XP, level, and badge info
         return res.status(200).json({
@@ -452,6 +483,13 @@ exports.getStudentProgress = async (req, res) => {
     // For each module, get progress stats
     const moduleProgress = [];
     
+    // Get student name for milestone notifications
+    const [studentData] = await db.execute(
+      'SELECT full_name FROM users WHERE id = ?',
+      [student_id]
+    );
+    const studentName = studentData[0]?.full_name || 'Student';
+    
     for (const module of modules) {
       // Get total content in this module
       const [totalContent] = await db.execute(
@@ -493,6 +531,30 @@ exports.getStudentProgress = async (req, res) => {
       const total = totalContent[0].total;
       const completed = completedContent[0].completed;
       const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+      
+      // Check if student just reached 50% milestone
+      // We need to track previous completion to detect when they cross 50%
+      // For now, we'll trigger notification when exactly at 50%
+      if (percentage === 50) {
+        // Check if we've already sent a milestone notification for this module
+        const [existingMilestone] = await db.execute(
+          `SELECT COUNT(*) as count FROM notifications 
+           WHERE user_id IN (SELECT parent_id FROM users WHERE id = ? AND parent_id IS NOT NULL)
+           AND notification_type = 'child_milestone'
+           AND JSON_EXTRACT(metadata, '$.milestone.details') LIKE ?`,
+          [student_id, `%50% completion in ${module.module_name}%`]
+        );
+        
+        // Only send notification if we haven't sent one before for this module
+        if (existingMilestone[0].count === 0) {
+          await NotificationService.notifyParentsModuleMilestone(
+            student_id,
+            studentName,
+            module.module_name,
+            percentage
+          );
+        }
+      }
 
       moduleProgress.push({
         moduleId: module.id,

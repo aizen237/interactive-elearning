@@ -14,6 +14,9 @@ const contentRoutes = require('./src/routes/contentRoutes');
 const analyticsRoutes = require('./src/routes/analyticsRoutes');
 const studentRoutes = require('./src/routes/studentRoutes');
 const parentRoutes = require('./src/routes/parentRoutes');
+const notificationRoutes = require('./src/routes/notificationRoutes');
+const adminRoutes = require('./src/routes/adminRoutes');
+const { initializeScheduledJobs } = require('./src/jobs/scheduledJobs');
 
 const app = express();
 
@@ -32,6 +35,8 @@ app.use('/api/content', contentRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/parent', parentRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Basic Route for testing
 app.get('/', (req, res) => {
@@ -95,6 +100,9 @@ app.listen(PORT, () => {
     console.log(`📚 Health Check: http://localhost:${PORT}/api/health`);
     console.log(`🔐 Auth Endpoints: http://localhost:${PORT}/api/auth`);
     console.log(`🧪 Test Endpoints: http://localhost:${PORT}/api/test\n`);
+    
+    // Initialize scheduled jobs after server starts
+    initializeScheduledJobs();
 });
 
 // Handle unhandled promise rejections
